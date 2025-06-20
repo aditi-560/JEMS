@@ -15,13 +15,13 @@ export function SiteFooter() {
             <li><Link href="#" className="text-gray-600 hover:text-gray-900">Book an Appointment</Link></li>
             <li><Link href="#" className="text-gray-600 hover:text-gray-900">Frequently Asked Questions</Link></li>
             <li><Link href="#" className="text-gray-600 hover:text-gray-900">Shipping & Returns</Link></li>
-            <li><Link href="#" className="text-gray-600 hover:text-gray-900">Tiffany Select Financing</Link></li>
+            <li><Link href="#" className="text-gray-600 hover:text-gray-900">name Select Financing</Link></li>
             <li><Link href="#" className="text-gray-600 hover:text-gray-900">Gift Cards</Link></li>
             <li><Link href="#" className="text-gray-600 hover:text-gray-900">Website Accessibility</Link></li>
           </ul>
         </div>
         <div>
-          <h3 className="font-semibold mb-4 text-base">Latest from Tiffany</h3>
+          <h3 className="font-semibold mb-4 text-base">Latest from name</h3>
           <p className="text-gray-600 mb-4">
             Be the first to know about exciting new designs, special events, store openings and much more.
           </p>

@@ -220,7 +220,7 @@ export default function ProductPage() {
             </div>
             <div className="flex items-start justify-between mb-2">
               <div>
-                <span className="block text-sm text-gray-700 mb-1">Tiffany HardWear</span>
+                <span className="block text-sm text-gray-700 mb-1">name HardWear</span>
                 <h1 className={`text-4xl font-bold ${playfairDisplay.className}`}>{product.name}</h1>
                 <h2 className="text-xl text-gray-700 mt-1 mb-2">{product.subtitle}</h2>
               </div>

@@ -125,7 +125,7 @@ export default function HomePage() {
           <div className="w-full lg:w-1/2">
             <Image
               src="/assets/hardwear-by-tiffany.jpg"
-              alt="HardWear by Tiffany"
+              alt="HardWear by name"
               width={600}
               height={600}
               className="w-full h-auto object-cover"
@@ -135,7 +135,7 @@ export default function HomePage() {
             <h1 className={`text-4xl md:text-5xl font-bold mb-6 ${playfairDisplay.className}`}>HardWear by Name</h1>
             <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
               Showcasing individual stories of power and resilience, award-winning actresses Greta Lee and Mikey Madison
-              and acclaimed painter Anna Weyant wear the bold links of HardWear by Tiffany, a symbol of love&apos;s
+              and acclaimed painter Anna Weyant wear the bold links of HardWear by name, a symbol of love&apos;s
               transformative strength.
             </p>
             <Link href="/catalog" passHref>
