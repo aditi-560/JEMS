@@ -136,35 +136,6 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <Gem className="h-6 w-6 text-purple-600" />
-              <span className="text-xl font-bold">LuxeGems</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <div className="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs">
-                  1
-                </div>
-                <span>Cart</span>
-                <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-                <div className="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs">
-                  2
-                </div>
-                <span className="font-medium">Checkout</span>
-                <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-                <div className="w-6 h-6 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs">
-                  3
-                </div>
-                <span>Confirmation</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" asChild>

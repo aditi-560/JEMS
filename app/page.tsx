@@ -1,10 +1,14 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, ShoppingCart, Heart, Search, Menu, User, Gem, Shield, Truck, RotateCcw } from "lucide-react"
+import { Star, ShoppingCart, Heart, Search, Menu, User, Gem, Shield, Truck, RotateCcw, ArrowLeft, ArrowRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
+import { playfairDisplay } from "../components/site-header"
 
 export default function HomePage() {
   const featuredProducts = [
@@ -13,7 +17,7 @@ export default function HomePage() {
       name: "Diamond Solitaire Ring",
       price: 45000,
       originalPrice: 52000,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/assets/Cat1.jpg",
       rating: 4.8,
       reviews: 124,
       category: "Rings",
@@ -24,7 +28,7 @@ export default function HomePage() {
       name: "Pearl Drop Earrings",
       price: 8500,
       originalPrice: 10000,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/assets/cat2.jpg",
       rating: 4.9,
       reviews: 89,
       category: "Earrings",
@@ -35,11 +39,14 @@ export default function HomePage() {
       name: "Gold Chain Necklace",
       price: 25000,
       originalPrice: 28000,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/assets/cat3.jpg",
       rating: 4.7,
       reviews: 156,
       category: "Necklaces",
+      material: "22K Gold",
+      stone: "None",
       isNew: true,
+      inStock: false,
     },
     {
       id: 4,
@@ -50,322 +57,314 @@ export default function HomePage() {
       rating: 4.6,
       reviews: 67,
       category: "Bracelets",
+      material: "Platinum",
+      stone: "Emerald",
       isNew: false,
+      inStock: true,
+    },
+    {
+      id: 5,
+      name: "Ruby Pendant Set",
+      price: 18000,
+      originalPrice: 22000,
+      image: "/placeholder.svg?height=300&width=300",
+      rating: 4.5,
+      reviews: 93,
+      category: "Sets",
+      material: "18K Gold",
+      stone: "Ruby",
+      isNew: false,
+      inStock: true,
+    },
+    {
+      id: 6,
+      name: "Sapphire Stud Earrings",
+      price: 12000,
+      originalPrice: 15000,
+      image: "/placeholder.svg?height=300&width=300",
+      rating: 4.8,
+      reviews: 78,
+      category: "Earrings",
+      material: "White Gold",
+      stone: "Sapphire",
+      isNew: true,
+      inStock: true,
     },
   ]
 
-  const categories = [
-    { name: "Rings", icon: "💍", count: 45 },
-    { name: "Necklaces", icon: "📿", count: 32 },
-    { name: "Earrings", icon: "👂", count: 28 },
-    { name: "Bracelets", icon: "⌚", count: 19 },
-    { name: "Pendants", icon: "🔸", count: 24 },
-    { name: "Sets", icon: "💎", count: 15 },
+  const images = [
+    { src: "/assets/rings.jpg", alt: "Rings Collection" },
+    { src: "/assets/bracelets.jpg", alt: "Bracelets Collection" },
+    { src: "/assets/necklace.jpg", alt: "Necklace Collection" },
+    { src: "/assets/earrings.jpg", alt: "Earrings Collection" },
   ]
+
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
+
+  const handlePrev = () => {
+    setCurrentImageIndex((prevIndex: number) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1))
+  }
+
+  const handleNext = () => {
+    setCurrentImageIndex((prevIndex: number) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1))
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex: number) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [images.length]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Gem className="h-8 w-8 text-purple-600" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  LuxeGems
-                </span>
-              </div>
-            </div>
-
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/catalog" className="text-gray-700 hover:text-purple-600 transition-colors">
-                Catalog
-              </Link>
-              <Link href="/collections" className="text-gray-700 hover:text-purple-600 transition-colors">
-                Collections
-              </Link>
-              <Link href="/about" className="text-gray-700 hover:text-purple-600 transition-colors">
-                About
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-purple-600 transition-colors">
-                Contact
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <div className="hidden md:flex items-center space-x-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input placeholder="Search jewelry..." className="pl-10 w-64" />
-                </div>
-              </div>
-              <Button variant="ghost" size="icon">
-                <Heart className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                  3
-                </Badge>
-              </Button>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
-      <section className="relative py-20 px-4">
-        <div className="container mx-auto text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
-              Exquisite Jewelry
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Discover our handcrafted collection of premium jewelry, where timeless elegance meets modern
-              sophistication
+      <section className="py-20 px-4">
+        <div className="container mx-auto flex flex-col lg:flex-row items-center lg:justify-between gap-8">
+          <div className="w-full lg:w-1/2">
+            <Image
+              src="/assets/hardwear-by-tiffany.jpg"
+              alt="HardWear by Tiffany"
+              width={600}
+              height={600}
+              className="w-full h-auto object-cover"
+            />
+          </div>
+          <div className="w-full lg:w-1/2 text-center lg:text-left">
+            <h1 className={`text-4xl md:text-5xl font-bold mb-6 ${playfairDisplay.className}`}>HardWear by Name</h1>
+            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+              Showcasing individual stories of power and resilience, award-winning actresses Greta Lee and Mikey Madison
+              and acclaimed painter Anna Weyant wear the bold links of HardWear by Tiffany, a symbol of love&apos;s
+              transformative strength.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3"
-              >
-                Shop Collection
+            <Link href="/catalog" passHref>
+              <Button size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white px-8 py-3">
+                Shop Now
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-purple-200 text-purple-600 hover:bg-purple-50 px-8 py-3"
-              >
-                View Catalog
-              </Button>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16 px-4 bg-white">
+      {/* Best Sellers Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-slate-50 to-white">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Certified Quality</h3>
-              <p className="text-gray-600 text-sm">All jewelry comes with authenticity certificates</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Truck className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Free Shipping</h3>
-              <p className="text-gray-600 text-sm">Complimentary shipping on orders above ₹10,000</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <RotateCcw className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Easy Returns</h3>
-              <p className="text-gray-600 text-sm">30-day hassle-free return policy</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Gem className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Lifetime Service</h3>
-              <p className="text-gray-600 text-sm">Free cleaning and maintenance for life</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="py-16 px-4 bg-gradient-to-r from-purple-50 to-pink-50">
-        <div className="container mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Shop by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {categories.map((category, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                <CardContent className="p-6 text-center">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{category.icon}</div>
-                  <h3 className="font-semibold mb-2">{category.name}</h3>
-                  <p className="text-sm text-gray-600">{category.count} items</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Collection</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Handpicked pieces that showcase the finest craftsmanship and timeless beauty
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
-              <Card key={product.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
-                <div className="relative overflow-hidden">
+          <h2 className={`text-3xl md:text-4xl font-bold text-center mb-4 ${playfairDisplay.className}`}>Best Sellers</h2>
+          <p className="text-center text-lg text-gray-600 mb-12">Our most popular pieces, loved by our customers.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {featuredProducts.slice(0, 3).map((product) => (
+              <div key={product.id} className="relative group bg-white rounded-lg shadow hover:shadow-lg transition-all overflow-hidden">
+                <div className="relative">
                   <Image
-                    src={product.image || "/placeholder.svg"}
+                    src={product.image}
                     alt={product.name}
                     width={300}
                     height={300}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover w-full h-64 group-hover:scale-105 transition-transform duration-300"
                   />
                   {product.isNew && (
-                    <Badge className="absolute top-4 left-4 bg-gradient-to-r from-purple-600 to-pink-600">New</Badge>
+                    <Badge className="absolute top-4 left-4 bg-black text-white">New</Badge>
                   )}
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Heart className="h-4 w-4" />
+                  <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button size="icon" variant="ghost" className="bg-white/80 hover:bg-white" aria-label="Add to Wishlist">
+                      <Heart className="h-5 w-5 text-gray-700" />
+                    </Button>
+                    <Button size="icon" variant="ghost" className="bg-white/80 hover:bg-white" aria-label="Quick View">
+                      <Search className="h-5 w-5 text-gray-700" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Star className="h-4 w-4 fill-gray-600 text-gray-600" />
+                    <span className="text-sm text-gray-600">{product.rating} ({product.reviews})</span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xl font-bold text-black">₹{product.price.toLocaleString()}</span>
+                    <span className="text-sm text-gray-500 line-through">₹{product.originalPrice.toLocaleString()}</span>
+                  </div>
+                  <Button className="w-full bg-black text-white hover:bg-gray-800 mt-2">
+                    <ShoppingCart className="h-4 w-4 mr-2" />Add to Cart
                   </Button>
                 </div>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {product.category}
-                    </Badge>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm text-gray-600">
-                        {product.rating} ({product.reviews})
-                      </span>
-                    </div>
-                  </div>
-                  <h3 className="font-semibold mb-3 group-hover:text-purple-600 transition-colors">{product.name}</h3>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-purple-600">₹{product.price.toLocaleString()}</span>
-                      <span className="text-sm text-gray-500 line-through">
-                        ₹{product.originalPrice.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                  <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </Button>
-                </CardContent>
-              </Card>
+              </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center mt-12">
-            <Button size="lg" variant="outline" className="border-purple-200 text-purple-600 hover:bg-purple-50">
-              View All Products
+      {/* Categories -> Image Carousel */}
+      <section className="py-16 px-4 bg-gradient-to-r from-purple-50 to-pink-50 relative overflow-hidden">
+        <div className="container mx-auto">
+          <h2 className={`text-3xl md:text-4xl font-bold text-center mb-12 ${playfairDisplay.className}`}>
+            Discover Our Categories
+          </h2>
+          <div className="relative w-full mx-auto h-[400px] md:h-[500px] lg:h-[600px] rounded-lg shadow-xl overflow-hidden">
+            <Image
+              src={images[currentImageIndex].src}
+              alt={images[currentImageIndex].alt}
+              layout="fill"
+              objectFit="cover"
+              className="transition-opacity duration-1000 ease-in-out"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 text-gray-800 rounded-full z-10"
+              onClick={handlePrev}
+            >
+              <ArrowLeft className="h-6 w-6" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 text-gray-800 rounded-full z-10"
+              onClick={handleNext}
+            >
+              <ArrowRight className="h-6 w-6" />
             </Button>
           </div>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="py-16 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Stay Updated</h2>
-          <p className="text-xl mb-8 opacity-90">Get notified about new collections and exclusive offers</p>
-          <div className="max-w-md mx-auto flex gap-4">
-            <Input
-              placeholder="Enter your email"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/70"
-            />
-            <Button className="bg-white text-purple-600 hover:bg-gray-100">Subscribe</Button>
+          <div className="text-center mt-12">
+            <Link href="/catalog" passHref>
+              <Button size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white px-8 py-3">
+                Explore More Categories
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
+      {/* Our Featured Products */}
+      <section className="py-16 px-4 bg-white">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Gem className="h-6 w-6 text-purple-400" />
-                <span className="text-xl font-bold">LuxeGems</span>
-              </div>
-              <p className="text-gray-400 mb-4">
-                Crafting timeless jewelry pieces that celebrate life's precious moments.
-              </p>
+          <h2 className={`text-3xl md:text-4xl font-bold text-center mb-4 ${playfairDisplay.className}`}>
+            Our Featured Products
+          </h2>
+          <p className="text-center text-lg text-gray-600 mb-12">
+            Discover a curated selection of our finest jewelry pieces, handcrafted with precision and passion.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="flex justify-center group overflow-hidden">
+              <Image
+                src="/assets/red.png"
+                alt="Red Necklace"
+                width={300}
+                height={300}
+                className="object-cover transform-gpu transition-all duration-500 ease-out group-hover:scale-115 group-hover:rotate-x-6 group-hover:rotate-y-6 group-hover:shadow-2xl"
+              />
             </div>
-            <div>
-              <h3 className="font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/catalog" className="hover:text-white transition-colors">
-                    Catalog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/collections" className="hover:text-white transition-colors">
-                    Collections
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about" className="hover:text-white transition-colors">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="hover:text-white transition-colors">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
+            <div className="flex justify-center group overflow-hidden">
+              <Image
+                src="/assets/multi.png"
+                alt="Multi-colored Necklace"
+                width={300}
+                height={300}
+                className="object-cover transform-gpu transition-all duration-500 ease-out group-hover:scale-115 group-hover:rotate-x-6 group-hover:rotate-y-6 group-hover:shadow-2xl"
+              />
             </div>
-            <div>
-              <h3 className="font-semibold mb-4">Customer Care</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/shipping" className="hover:text-white transition-colors">
-                    Shipping Info
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/returns" className="hover:text-white transition-colors">
-                    Returns
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/sizing" className="hover:text-white transition-colors">
-                    Size Guide
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/care" className="hover:text-white transition-colors">
-                    Jewelry Care
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Contact Info</h3>
-              <div className="space-y-2 text-gray-400">
-                <p>📧 hello@luxegems.com</p>
-                <p>📞 +91 98765 43210</p>
-                <p>📍 Mumbai, India</p>
-              </div>
+            <div className="flex justify-center group overflow-hidden">
+              <Image
+                src="/assets/grey.png"
+                alt="Grey Necklace"
+                width={300}
+                height={300}
+                className="object-cover transform-gpu transition-all duration-500 ease-out group-hover:scale-115 group-hover:rotate-x-6 group-hover:rotate-y-6 group-hover:shadow-2xl"
+              />
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 LuxeGems. All rights reserved.</p>
+          <div className="text-center mt-12">
+            <Link href="/catalog" passHref>
+              <Button size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white px-8 py-3">
+                Show More Products
+              </Button>
+            </Link>
           </div>
         </div>
-      </footer>
+      </section>
+
+      {/* Book an Appointment Section */}
+      <section className="relative py-20 px-4 bg-cover bg-center" style={{ backgroundImage: `url('/assets/bg.jpg')` }}>
+        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <div className="relative container mx-auto text-center text-white z-10">
+          <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${playfairDisplay.className}`}>Interested in Our Products?</h2>
+          <p className="text-lg md:text-xl mb-8">
+            Book an appointment with our experts for a personalized experience.
+          </p>
+          <Button size="lg" className="bg-white text-black font-bold hover:bg-gray-200">
+            Book Appointment
+          </Button>
+        </div>
+      </section>
+
+      {/* Customer Testimonials Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-white to-slate-50">
+        <div className="container mx-auto">
+          <h2 className={`text-3xl md:text-4xl font-bold text-center mb-12 ${playfairDisplay.className}`}>What Our Customers Say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="bg-white border border-gray-200 shadow-none">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <Image src="/placeholder-user.jpg" alt="Customer 1" width={64} height={64} className="rounded-full mb-4" />
+                <p className="text-gray-700 mb-4">“Absolutely stunning jewelry! The quality and craftsmanship exceeded my expectations. Will definitely shop again.”</p>
+                <span className="font-semibold text-black">Priya S.</span>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-200 shadow-none">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <Image src="/placeholder-user.jpg" alt="Customer 2" width={64} height={64} className="rounded-full mb-4" />
+                <p className="text-gray-700 mb-4">“Fast delivery and beautiful packaging. The ring I ordered is even more gorgeous in person!”</p>
+                <span className="font-semibold text-black">Amit K.</span>
+              </CardContent>
+            </Card>
+            <Card className="bg-white border border-gray-200 shadow-none">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <Image src="/placeholder-user.jpg" alt="Customer 3" width={64} height={64} className="rounded-full mb-4" />
+                <p className="text-gray-700 mb-4">“Excellent customer service and a wonderful selection. I found the perfect gift for my wife.”</p>
+                <span className="font-semibold text-black">Rahul D.</span>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Badges Section */}
+      <section className="py-12 px-4 bg-white border-t border-b border-gray-100">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-center gap-8">
+          <div className="flex flex-col items-center">
+            <Shield className="h-10 w-10 text-black mb-2" />
+            <span className="font-semibold text-black">Secure Payment</span>
+            <span className="text-gray-500 text-sm">100% Payment Protection</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <Truck className="h-10 w-10 text-black mb-2" />
+            <span className="font-semibold text-black">Free Shipping</span>
+            <span className="text-gray-500 text-sm">On all orders above ₹5,000</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <RotateCcw className="h-10 w-10 text-black mb-2" />
+            <span className="font-semibold text-black">Easy Returns</span>
+            <span className="text-gray-500 text-sm">7-day hassle-free returns</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <Gem className="h-10 w-10 text-black mb-2" />
+            <span className="font-semibold text-black">Certified Gems</span>
+            <span className="text-gray-500 text-sm">Authenticity Guaranteed</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Signup Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-slate-50 to-white">
+        <div className="container mx-auto max-w-xl text-center">
+          <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${playfairDisplay.className}`}>Stay in the Loop</h2>
+          <p className="text-lg text-gray-600 mb-8">Sign up for our newsletter to receive exclusive offers, new arrivals, and more.</p>
+          <form className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Input type="email" placeholder="Enter your email" className="flex-1 border-black focus:ring-black" required />
+            <Button type="submit" className="bg-black text-white hover:bg-gray-800 px-8 py-3">Subscribe</Button>
+          </form>
+        </div>
+      </section>
     </div>
   )
 }

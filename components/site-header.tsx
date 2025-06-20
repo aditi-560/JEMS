@@ -3,16 +3,24 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, ShoppingCart, User, Search } from "lucide-react"
+import { Menu, ShoppingCart, User, Search, MapPin, Bell, Calendar, Heart } from "lucide-react"
+import { Playfair_Display } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useCart } from "@/lib/cart"
+import { Input } from "@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+
+export const playfairDisplay = Playfair_Display({ subsets: ["latin"], weight: ["400", "700"] })
 
 export function SiteHeader() {
   const pathname = usePathname()
   const cart = useCart()
   const [isMounted, setIsMounted] = useState(false)
+  const [showSearchInput, setShowSearchInput] = useState(false)
+  const [isAppointmentDialogOpen, setIsAppointmentDialogOpen] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
@@ -42,87 +50,190 @@ export function SiteHeader() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Mobile menu */}
-          <div className="md:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Menu">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px]">
-                <div className="flex flex-col space-y-4 mt-6">
-                  {routes.map((route) => (
-                    <Link
-                      key={route.href}
-                      href={route.href}
-                      className={`text-lg font-medium transition-colors hover:text-primary ${
-                        route.active ? "text-primary" : "text-muted-foreground"
-                      }`}
-                    >
-                      {route.label}
-                    </Link>
-                  ))}
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">L</span>
+    <>
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4">
+          <div className="flex h-16 items-center justify-between">
+            {/* Left side: Mobile menu, Search, Location, Contact */}
+            <div className="flex items-center space-x-2 flex-1">
+              {/* Mobile menu */}
+              <div className="md:hidden">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" aria-label="Menu">
+                      <Menu className="h-5 w-5" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="w-[300px]">
+                    <div className="flex flex-col space-y-4 mt-6">
+                      {routes.map((route) => (
+                        <Link
+                          key={route.href}
+                          href={route.href}
+                          className={`text-lg font-medium transition-colors hover:text-primary ${
+                            route.active ? "text-primary" : "text-muted-foreground"
+                          }`}
+                        >
+                          {route.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </div>
-              <span className="ml-2 text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                LuxeGems
-              </span>
-            </div>
-          </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {routes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  route.active ? "text-primary" : "text-muted-foreground"
-                }`}
-              >
-                {route.label}
+              {!showSearchInput ? (
+                <Button variant="ghost" size="icon" aria-label="Search" onClick={() => setShowSearchInput(true)}>
+                  <Search className="h-5 w-5" />
+                </Button>
+              ) : (
+                <div className="relative flex-1 max-w-xs ml-2">
+                  <Input
+                    type="text"
+                    placeholder="Search..."
+                    className="w-full pr-10"
+                    onBlur={() => setShowSearchInput(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        setShowSearchInput(false);
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-1/2 -translate-y-1/2"
+                    onClick={() => setShowSearchInput(false)}
+                  >
+                    <Search className="h-5 w-5" />
+                  </Button>
+                </div>
+              )}
+
+              <Button variant="ghost" size="icon" aria-label="Location">
+                <MapPin className="h-5 w-5" />
+              </Button>
+
+              <Link href="/contact" className="hidden md:flex items-center space-x-1 text-sm font-medium text-muted-foreground hover:text-foreground">
+                <Bell className="h-5 w-5" />
+                <span>Contact Us</span>
               </Link>
-            ))}
-          </nav>
+            </div>
 
-          {/* Right side actions */}
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" aria-label="Search">
-              <Search className="h-5 w-5" />
-            </Button>
+            {/* Center: Logo */}
+            <div className="flex justify-center flex-1">
+              <Link href="/" className="flex items-center">
+                <span className={`text-3xl font-bold tracking-widest ${playfairDisplay.className}`}>Name & CO.</span>
+              </Link>
+            </div>
 
-            <Link href="/admin">
-              <Button variant="ghost" size="icon" aria-label="Admin">
-                <User className="h-5 w-5" />
+            {/* Right side actions */}
+            <div className="flex items-center space-x-2 flex-1 justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsAppointmentDialogOpen(true)}
+                className="hidden md:flex items-center space-x-1 text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                <Calendar className="h-5 w-5" />
+                <span>Book an Appointment</span>
               </Button>
-            </Link>
 
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative" aria-label="Shopping Cart">
-                <ShoppingCart className="h-5 w-5" />
-                {isMounted && cart.getItemCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
-                    {cart.getItemCount()}
-                  </span>
-                )}
-              </Button>
-            </Link>
+              <Link href="/profile">
+                <Button variant="ghost" size="icon" aria-label="Admin">
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
+
+              <Link href="/wishlist">
+                <Button variant="ghost" size="icon" aria-label="Wishlist">
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </Link>
+
+              <Link href="/cart">
+                <Button variant="ghost" size="icon" className="relative" aria-label="Shopping Cart">
+                  <ShoppingCart className="h-5 w-5" />
+                  {isMounted && cart.getItemCount() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
+                      {cart.getItemCount()}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <Dialog open={isAppointmentDialogOpen} onOpenChange={setIsAppointmentDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Book an Appointment</DialogTitle>
+            <DialogDescription>
+              Fill out the form below to book a personalized jewelry consultation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input id="name" defaultValue="Your Name" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input id="email" defaultValue="your@example.com" className="col-span-3" type="email" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phone" className="text-right">
+                Phone
+              </Label>
+              <Input id="phone" defaultValue="" className="col-span-3" type="tel" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="date" className="text-right">
+                Preferred Date
+              </Label>
+              <Input id="date" defaultValue="" className="col-span-3" type="date" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="time" className="text-right">
+                Preferred Time
+              </Label>
+              <Input id="time" defaultValue="" className="col-span-3" type="time" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit">Submit Appointment</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Secondary Navigation for Categories */}
+      <nav className="hidden md:block border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4">
+          <ul className="flex h-12 items-center justify-center space-x-8 text-sm font-medium">
+            <li>
+              <Link href="/catalog?category=Natural%20Gemstones" className="text-muted-foreground hover:text-foreground">Natural Gemstones</Link>
+            </li>
+            <li>
+              <Link href="/catalog?category=Lab%20Grown" className="text-muted-foreground hover:text-foreground">Lab Grown</Link>
+            </li>
+            <li>
+              <Link href="/catalog?category=Synthetic" className="text-muted-foreground hover:text-foreground">Synthetic</Link>
+            </li>
+            <li>
+              <Link href="/catalog?category=Jewellery" className="text-muted-foreground hover:text-foreground">Jewellery</Link>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </>
   )
 }
+
+
