@@ -3,14 +3,22 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, ShoppingCart, User, Search, MapPin, Bell, Calendar, Heart } from "lucide-react"
+import { Menu, ShoppingCart, User, Search, MapPin, Bell, Calendar, Heart, CalendarDays } from "lucide-react"
 import { Playfair_Display } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useCart } from "@/lib/cart"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
 export const playfairDisplay = Playfair_Display({ subsets: ["latin"], weight: ["400", "700"] })
@@ -130,88 +138,169 @@ export function SiteHeader() {
 
             {/* Right side actions */}
             <div className="flex items-center space-x-2 flex-1 justify-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsAppointmentDialogOpen(true)}
-                className="hidden md:flex items-center space-x-1 text-sm font-medium text-muted-foreground hover:text-foreground"
-              >
-                <Calendar className="h-5 w-5" />
-                <span>Book an Appointment</span>
-              </Button>
+              <div className="hidden md:flex items-center">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-2 text-sm">
+                      <CalendarDays className="h-5 w-5" />
+                      Book an Appointment
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle className={playfairDisplay.className}>Book an Appointment</DialogTitle>
+                      <DialogDescription>
+                        Schedule a virtual or in-store appointment with one of our jewelry experts.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                          Name
+                        </Label>
+                        <Input id="name" defaultValue="Your Name" className="col-span-3" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="email" className="text-right">
+                          Email
+                        </Label>
+                        <Input id="email" defaultValue="your@example.com" className="col-span-3" type="email" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="phone" className="text-right">
+                          Phone
+                        </Label>
+                        <Input id="phone" defaultValue="" className="col-span-3" type="tel" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="date" className="text-right">
+                          Preferred Date
+                        </Label>
+                        <Input id="date" defaultValue="" className="col-span-3" type="date" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="time" className="text-right">
+                          Preferred Time
+                        </Label>
+                        <Input id="time" defaultValue="" className="col-span-3" type="time" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" className="w-full bg-black text-white">Confirm Appointment</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                <Link href="/profile" passHref>
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/wishlist" passHref>
+                  <Button variant="ghost" size="icon">
+                    <Heart className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/cart" passHref>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <ShoppingCart className="h-5 w-5" />
+                    {isMounted && cart.getItemCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                        {cart.getItemCount()}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+              </div>
 
-              <Link href="/profile">
-                <Button variant="ghost" size="icon" aria-label="Admin">
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
-
-              <Link href="/wishlist">
-                <Button variant="ghost" size="icon" aria-label="Wishlist">
-                  <Heart className="h-5 w-5" />
-                </Button>
-              </Link>
-
-              <Link href="/cart">
-                <Button variant="ghost" size="icon" className="relative" aria-label="Shopping Cart">
-                  <ShoppingCart className="h-5 w-5" />
-                  {isMounted && cart.getItemCount() > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
-                      {cart.getItemCount()}
-                    </span>
-                  )}
-                </Button>
-              </Link>
+              {/* Mobile Navigation */}
+              <div className="md:hidden flex items-center">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <CalendarDays className="h-5 w-5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle className={playfairDisplay.className}>Book an Appointment</DialogTitle>
+                      <DialogDescription>
+                        Schedule a virtual or in-store appointment with one of our jewelry experts.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                          Name
+                        </Label>
+                        <Input id="name" defaultValue="Your Name" className="col-span-3" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="email" className="text-right">
+                          Email
+                        </Label>
+                        <Input id="email" defaultValue="your@example.com" className="col-span-3" type="email" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="phone" className="text-right">
+                          Phone
+                        </Label>
+                        <Input id="phone" defaultValue="" className="col-span-3" type="tel" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="date" className="text-right">
+                          Preferred Date
+                        </Label>
+                        <Input id="date" defaultValue="" className="col-span-3" type="date" />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="time" className="text-right">
+                          Preferred Time
+                        </Label>
+                        <Input id="time" defaultValue="" className="col-span-3" type="time" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" className="w-full bg-black text-white">Confirm Appointment</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                <Link href="/cart" passHref>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <ShoppingCart className="h-5 w-5" />
+                    {isMounted && cart.getItemCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                        {cart.getItemCount()}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Menu className="h-6 w-6" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                    <nav className="flex flex-col gap-4">
+                      {routes.map((route) => (
+                        <Link
+                          key={route.href}
+                          href={route.href}
+                          className={`text-lg font-medium transition-colors hover:text-primary ${
+                            route.active ? "text-primary" : "text-muted-foreground"
+                          }`}
+                        >
+                          {route.label}
+                        </Link>
+                      ))}
+                    </nav>
+                  </SheetContent>
+                </Sheet>
+              </div>
             </div>
           </div>
         </div>
       </header>
-
-      <Dialog open={isAppointmentDialogOpen} onOpenChange={setIsAppointmentDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Book an Appointment</DialogTitle>
-            <DialogDescription>
-              Fill out the form below to book a personalized jewelry consultation.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input id="name" defaultValue="Your Name" className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <Input id="email" defaultValue="your@example.com" className="col-span-3" type="email" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">
-                Phone
-              </Label>
-              <Input id="phone" defaultValue="" className="col-span-3" type="tel" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date" className="text-right">
-                Preferred Date
-              </Label>
-              <Input id="date" defaultValue="" className="col-span-3" type="date" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time" className="text-right">
-                Preferred Time
-              </Label>
-              <Input id="time" defaultValue="" className="col-span-3" type="time" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit">Submit Appointment</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Secondary Navigation for Categories */}
       <nav className="hidden md:block border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

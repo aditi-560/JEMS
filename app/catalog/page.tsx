@@ -14,6 +14,8 @@ import Link from "next/link"
 import { playfairDisplay } from "../../components/site-header"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
+import { useCart } from "../../lib/cart"
+import { useWishlist } from "../../lib/wishlist"
 
 export default function CatalogPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -21,6 +23,8 @@ export default function CatalogPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
   const [filterOpen, setFilterOpen] = useState(false)
+  const { addItem: addCartItem } = useCart()
+  const { addItem: toggleWishlistItem, isInWishlist } = useWishlist()
 
   const products = [
     {
@@ -467,9 +471,13 @@ export default function CatalogPage() {
                         size="icon"
                         variant="ghost"
                         className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          toggleWishlistItem({ ...product, quantity: 1 })
+                        }}
                       >
-                        <Heart className="h-4 w-4 text-gray-600" />
+                        <Heart className={`h-4 w-4 text-gray-600 ${isInWishlist(product.id) ? "fill-current text-red-500" : ""}`} />
                       </Button>
                     </div>
                     <CardContent className={`p-6 ${viewMode === "list" ? "flex-1" : ""}`}>
@@ -498,12 +506,15 @@ export default function CatalogPage() {
                         </div>
                       </div>
                       <Button
-                        className={`w-full ${product.inStock ? "bg-black text-white hover:bg-gray-800" : "bg-gray-300 text-gray-600 cursor-not-allowed"}`}
+                        className="w-full bg-black text-white hover:bg-gray-800 mt-2"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          addCartItem({ id: product.id, name: product.name, price: product.price, image: product.image })
+                        }}
                         disabled={!product.inStock}
-                        onClick={e => e.stopPropagation()}
                       >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        {product.inStock ? "Add to Cart" : "Out of Stock"}
+                        <ShoppingCart className="h-4 w-4 mr-2" />Add to Cart
                       </Button>
                     </CardContent>
                   </Card>

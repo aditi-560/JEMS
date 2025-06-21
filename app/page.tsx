@@ -9,6 +9,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { playfairDisplay } from "../components/site-header"
+import { useCart } from "../lib/cart"
 
 export default function HomePage() {
   const featuredProducts = [
@@ -117,6 +118,8 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  const { addItem } = useCart();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Hero Section */}
@@ -155,37 +158,38 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {featuredProducts.slice(0, 3).map((product) => (
               <div key={product.id} className="relative group bg-white rounded-lg shadow hover:shadow-lg transition-all overflow-hidden">
-                <div className="relative">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={300}
-                    height={300}
-                    className="object-cover w-full h-64 group-hover:scale-105 transition-transform duration-300"
-                  />
-                  {product.isNew && (
-                    <Badge className="absolute top-4 left-4 bg-black text-white">New</Badge>
-                  )}
-                  <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button size="icon" variant="ghost" className="bg-white/80 hover:bg-white" aria-label="Add to Wishlist">
-                      <Heart className="h-5 w-5 text-gray-700" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="bg-white/80 hover:bg-white" aria-label="Quick View">
-                      <Search className="h-5 w-5 text-gray-700" />
-                    </Button>
+                <Link href={`/catalog/${product.id}`} className="block">
+                  <div className="relative">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      width={300}
+                      height={300}
+                      className="object-cover w-full h-64 group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {product.isNew && (
+                      <Badge className="absolute top-4 left-4 bg-black text-white">New</Badge>
+                    )}
                   </div>
+                  <div className="p-6">
+                    <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Star className="h-4 w-4 fill-gray-600 text-gray-600" />
+                      <span className="text-sm text-gray-600">{product.rating} ({product.reviews})</span>
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xl font-bold text-black">₹{product.price.toLocaleString()}</span>
+                      <span className="text-sm text-gray-500 line-through">₹{product.originalPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </Link>
+                <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <Button size="icon" variant="ghost" className="bg-white/80 hover:bg-white" aria-label="Add to Wishlist" onClick={e => e.stopPropagation()}>
+                    <Heart className="h-5 w-5 text-gray-700" />
+                  </Button>
                 </div>
-                <div className="p-6">
-                  <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Star className="h-4 w-4 fill-gray-600 text-gray-600" />
-                    <span className="text-sm text-gray-600">{product.rating} ({product.reviews})</span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xl font-bold text-black">₹{product.price.toLocaleString()}</span>
-                    <span className="text-sm text-gray-500 line-through">₹{product.originalPrice.toLocaleString()}</span>
-                  </div>
-                  <Button className="w-full bg-black text-white hover:bg-gray-800 mt-2">
+                <div className="p-6 pt-0">
+                  <Button className="w-full bg-black text-white hover:bg-gray-800 mt-2" onClick={e => { e.stopPropagation(); addItem({ id: product.id, name: product.name, price: product.price, image: product.image }); }}>
                     <ShoppingCart className="h-4 w-4 mr-2" />Add to Cart
                   </Button>
                 </div>
@@ -196,7 +200,7 @@ export default function HomePage() {
       </section>
 
       {/* Categories -> Image Carousel */}
-      <section className="py-16 px-4 bg-gradient-to-r from-purple-50 to-pink-50 relative overflow-hidden">
+      <section className="py-16 px-4 bg-white relative overflow-hidden">
         <div className="container mx-auto">
           <h2 className={`text-3xl md:text-4xl font-bold text-center mb-12 ${playfairDisplay.className}`}>
             Discover Our Categories
